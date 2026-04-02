@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
+use Dom\Text;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -35,7 +36,9 @@ class UserResource extends Resource
                         TextInput::make('name')
                             ->required()
                             ->label('Full Name'),
-
+                        TextInput::make('username')
+                            ->required()
+                            ->label('Username'),
                         TextInput::make('email')
                             ->email()
                             ->required()
