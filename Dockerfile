@@ -24,17 +24,13 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www
 COPY . /var/www
 
-# 💡 ৫. কম্পোজার ডিপেন্ডেন্সি ইনস্টল (--no-scripts যোগ করা হয়েছে)
+# ৫. কম্পোজার ডিপেন্ডেন্সি ইনস্টল (এখানে কোনো লারাভেল স্ক্রিপ্ট রান হবে না, বিল্ড হবে ১০০% সেফ)
 RUN composer install --no-interaction --optimize-autoloader --no-dev --no-scripts
 
-# 💡 ৬. ম্যানুয়ালি প্যাকেজ ডিসকভার এবং ফিলামেন্ট অ্যাসেট জেনারেট করা
-RUN php artisan package:discover --ansi
-RUN php artisan filament:assets
-
-# ৭. রেন্ডারের জন্য Nginx কনফিগারেশন এবং ডিরেক্টরি পারমিশন সেটআপ
+# ৬. রেন্ডারের জন্য Nginx কনফিগারেশন এবং ডিরেক্টরি পারমিশন সেটআপ
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-# ৮. Nginx ডিফল্ট সাইট কনফিগ তৈরি
+# ৭. Nginx ডিফল্ট সাইট কনফিগ তৈরি
 RUN echo 'server {\n\
     listen 80;\n\
     index index.php index.html;\n\
@@ -62,5 +58,5 @@ RUN echo 'server {\n\
     }\n\
 }' > /etc/nginx/sites-available/default
 
-# ৯. কন্টেইনার স্টার্ট হওয়ার কমান্ড
-CMD service nginx start && php-fpm
+# 💡 ৮. রানটাইম কমান্ড (কন্টেইনার স্টার্ট হওয়ার সময় ডাটাবেজ কানেকশন সহ এই কমান্ডগুলো এক্সিকিউট হবে)
+CMD php artisan package:discover --ansi && php artisan filament:assets && service nginx start && php-fpm
