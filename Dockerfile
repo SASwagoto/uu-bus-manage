@@ -1,18 +1,21 @@
-FROM php:8.3-fpm
+FROM php:8.2-fpm
 
-# সিস্টেম ডিপেন্ডেন্সি এবং টুলস ইনস্টল
+# সিস্টেম ডিপেন্ডেন্সি এবং টুলস ইনস্টল (এখানে libicu-dev এবং libzip-dev যোগ করা হয়েছে)
 RUN apt-get update && apt-get install -y \
     git \
     curl \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libicu-dev \
+    libzip-dev \
     zip \
     unzip \
     nginx
 
-# PHP এক্সটেনশন ইনস্টল (MySQL সহ)
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+# PHP এক্সটেনশন ইনস্টল (এখানে intl এবং zip যোগ করা হয়েছে)
+RUN docker-php-ext-configure intl \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip
 
 # কম্পোজার (Composer) কপি করা
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -25,7 +28,7 @@ COPY . /var/www
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
 # রেন্ডারের জন্য Nginx কনফিগারেশন এবং পারমিশন সেটআপ
-RUN chown -Total var/www/storage var/www/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
 # Nginx ডিফল্ট সাইট কনফিগ তৈরি
 RUN echo 'server {\n\
