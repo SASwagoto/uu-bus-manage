@@ -25,7 +25,7 @@ class AdminSeeder extends Seeder
         User::create([
             'name' => 'Test Driver',
             'username' => 'driver01',
-            'email' => 'driver@swagoto.com',
+            'email' => 'driver@gmail.com',
             'password' => Hash::make('12345678'),
             'role' => 'driver',
             'phone' => '01700000000',
@@ -35,7 +35,7 @@ class AdminSeeder extends Seeder
         User::create([
             'name' => 'Test Student',
             'username' => 'student01',
-            'email' => 'student@swagoto.com',
+            'email' => 'student@uttarauniversity.edu.bd',
             'password' => Hash::make('12345678'),
             'role' => 'passenger',
             'student_id' => '2220000000',
