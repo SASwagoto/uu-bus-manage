@@ -1,6 +1,6 @@
-FROM php:8.2-fpm
+FROM php:8.3-fpm
 
-# সিস্টেম ডিপেন্ডেন্সি এবং টুলস ইনস্টল (এখানে libicu-dev এবং libzip-dev যোগ করা হয়েছে)
+# সিস্টেম ডিপেন্ডেন্সি এবংツールス ইনস্টল
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     nginx
 
-# PHP এক্সটেনশন ইনস্টল (এখানে intl এবং zip যোগ করা হয়েছে)
+# PHP এক্সটেনশন ইনস্টল
 RUN docker-php-ext-configure intl \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip
 
