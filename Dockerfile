@@ -1,6 +1,6 @@
-FROM php:8.2-fpm
+FROM php:8.3-fpm
 
-# সিস্টেম ডিপেন্ডেন্সি এবং টুলস ইনস্টল (এখানে libicu-dev এবং libzip-dev যোগ করা হয়েছে)
+# ১. সিস্টেম ডিপেন্ডেন্সি এবং টুলস ইনস্টল
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -13,31 +13,40 @@ RUN apt-get update && apt-get install -y \
     unzip \
     nginx
 
-# PHP এক্সটেনশন ইনস্টল (এখানে intl এবং zip যোগ করা হয়েছে)
+# ২. PHP এক্সটেনশন ইনস্টল
 RUN docker-php-ext-configure intl \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip
 
-# কম্পোজার (Composer) কপি করা
+# ৩. কম্পোজার (Composer) কপি করা
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# প্রজেক্ট ফাইল কপি করা
+# ৪. প্রজেক্ট ফাইল কন্টেইনারে কপি করা
 WORKDIR /var/www
 COPY . /var/www
 
-# কম্পোজার ডিপেন্ডেন্সি ইনস্টল
-RUN composer install --no-interaction --optimize-autoloader --no-dev
+# ৫. কম্পোজার ডিপেন্ডেন্সি ইনস্টল (এখানে কোনো লারাভেল স্ক্রিপ্ট রান হবে না, বিল্ড হবে ১০০% সেফ)
+RUN composer install --no-interaction --optimize-autoloader --no-dev --no-scripts
 
-# রেন্ডারের জন্য Nginx কনফিগারেশন এবং পারমিশন সেটআপ
+# ৬. রেন্ডারের জন্য Nginx কনফিগারেশন এবং ডিরেক্টরি পারমিশন সেটআপ
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-# Nginx ডিফল্ট সাইট কনফিগ তৈরি
+# ৭. Nginx ডিফল্ট সাইট কনফিগ তৈরি
 RUN echo 'server {\n\
     listen 80;\n\
     index index.php index.html;\n\
     root /var/www/public;\n\
+    \n\
+    location /build/ {\n\
+        try_files $uri $uri/ =404;\n\
+    }\n\
+    location /vendor/ {\n\
+        try_files $uri $uri/ =404;\n\
+    }\n\
+    \n\
     location / {\n\
         try_files $uri $uri/ /index.php?$query_string;\n\
     }\n\
+    \n\
     location ~ \.php$ {\n\
         try_files $uri =404;\n\
         fastcgi_split_path_info ^(.+\.php)(/.+)$;\n\
@@ -49,5 +58,5 @@ RUN echo 'server {\n\
     }\n\
 }' > /etc/nginx/sites-available/default
 
-# সার্ভিস স্টার্ট করার কমান্ড
-CMD service nginx start && php-fpm
+# 💡 ৮. রানটাইম কমান্ড (কন্টেইনার স্টার্ট হওয়ার সময় ডাটাবেজ কানেকশন সহ এই কমান্ডগুলো এক্সিকিউট হবে)
+CMD php artisan package:discover --ansi && php artisan filament:assets && service nginx start && php-fpm
