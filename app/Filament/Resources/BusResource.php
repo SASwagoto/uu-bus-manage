@@ -40,7 +40,7 @@ class BusResource extends Resource
                             'idle' => 'Idle',
                             'maintenance' => 'Maintenance',
                         ])
-                        ->default('idle')
+                        ->default('active')
                         ->required(),
                 ])
         ]);

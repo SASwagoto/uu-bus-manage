@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class BusSchedule extends Model
 {
-    protected $fillable = ['bus_id', 'route_id', 'driver_id', 'departure_time', 'arrival_time', 'days_of_week', 'is_active'];
+    protected $fillable = ['bus_id', 'route_id', 'driver_id', 'departure_time', 'arrival_time', 'days_of_week', 'is_active', 'direction'];
 
     protected $casts = [
         'days_of_week' => 'array',

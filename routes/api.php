@@ -12,6 +12,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     
     Route::prefix('driver')->group(function () {
+        Route::get('/current-active-trip', [TripController::class, 'getCurrentActiveTrip']);
         Route::post('/trip/start', [TripController::class, 'startTrip']);
         Route::post('/trip/{id}/update-location', [TripController::class, 'updateLocation']);
         Route::post('/trip/{id}/end', [TripController::class, 'endTrip']);
@@ -21,6 +22,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/active-trips', [TripController::class, 'getActiveTrips']);
         Route::get('/trip/{id}/track', [TripController::class, 'trackBus']);
         Route::post('/trip/{id}/check-in', [TripController::class, 'passengerCheckIn']);
+        Route::post('/trip/{id}/check-out', [TripController::class, 'passengerCheckOut']);
+        Route::get('/trip/{id}/status', [TripController::class, 'checkCurrentStatus']);
     });
 
     Route::get('/schedules', [TripController::class, 'getSchedules']);

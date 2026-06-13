@@ -19,7 +19,7 @@ return new class extends Migration
             $table->time('departure_time');
             $table->time('arrival_time')->nullable();
             $table->json('days_of_week')->nullable();
-
+            $table->enum('direction', ['up', 'down'])->default('up');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

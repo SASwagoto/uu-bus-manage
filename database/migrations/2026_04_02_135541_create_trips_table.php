@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('current_lat', 10, 8)->nullable();
             $table->decimal('current_lng', 11, 8)->nullable();
             $table->integer('passenger_count')->default(0);
+            $table->timestamp('end_time')->nullable();
             $table->timestamps();
         });
     }

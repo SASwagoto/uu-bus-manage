@@ -45,6 +45,20 @@ class BusScheduleResource extends Resource
                         ->relationship('route', 'route_name')
                         ->required(),
 
+                    Forms\Components\Radio::make('direction')
+                        ->label('Service Direction')
+                        ->options([
+                            'up' => 'Up Service',
+                            'down' => 'Down Service',
+                        ])
+                        ->descriptions([
+                            'up' => 'বাসটি ক্যাম্পাস অভিমুখে আসবে।',
+                            'down' => 'বাসটি ক্যাম্পাস থেকে ছেড়ে যাবে।',
+                        ])
+                        ->default('up')
+                        ->columns(2)
+                        ->required(),
+
                     Forms\Components\TimePicker::make('departure_time')
                         ->required()
                         ->label('Departure Time')
@@ -88,16 +102,17 @@ class BusScheduleResource extends Resource
                     Forms\Components\CheckboxList::make('days_of_week')
                         ->label('Operation Days')
                         ->options([
-                            'Saturday' => 'Saturday',
-                            'Sunday' => 'Sunday',
                             'Monday' => 'Monday',
                             'Tuesday' => 'Tuesday',
                             'Wednesday' => 'Wednesday',
                             'Thursday' => 'Thursday',
                             'Friday' => 'Friday',
+                            'Saturday' => 'Saturday',
+                            'Sunday' => 'Sunday',
                         ])
                         ->columns(2)
                         ->required()
+                        ->default(['Saturday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'])
                         ->live(),
                         
                     Forms\Components\Toggle::make('is_active')
@@ -113,6 +128,7 @@ class BusScheduleResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('bus.bus_number')->label('Bus'),
                 Tables\Columns\TextColumn::make('route.route_name')->label('Route'),
+                Tables\Columns\TextColumn::make('direction')->label('Service Direction'),
                 Tables\Columns\TextColumn::make('departure_time')->time('h:i A')->label('Time'),
                 Tables\Columns\TextColumn::make('days_of_week')
                     ->badge()
