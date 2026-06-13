@@ -24,10 +24,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www
 COPY . /var/www
 
-# ۵. কম্পোজার ডিপেন্ডেন্সি ইনস্টল
-RUN composer install --no-interaction --optimize-autoloader --no-dev
+# 💡 ৫. কম্পোজার ডিপেন্ডেন্সি ইনস্টল (--no-scripts যোগ করা হয়েছে)
+RUN composer install --no-interaction --optimize-autoloader --no-dev --no-scripts
 
-# ৬. শুধুমাত্র ফিলামেন্ট অ্যাসেট জেনারেট করা
+# 💡 ৬. ম্যানুয়ালি প্যাকেজ ডিসকভার এবং ফিলামেন্ট অ্যাসেট জেনারেট করা
+RUN php artisan package:discover --ansi
 RUN php artisan filament:assets
 
 # ৭. রেন্ডারের জন্য Nginx কনফিগারেশন এবং ডিরেক্টরি পারমিশন সেটআপ
